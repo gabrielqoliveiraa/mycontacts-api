@@ -1,8 +1,8 @@
 const { v4: uuid } = require('uuid');
 const DB = require('../../database/index');
 
-class ContactRepository {
-  collection = DB.getCollection('contacts');
+class CategoryRepository {
+  collection = DB.getCollection('categories');
 
   findAll() {
     return this.collection.find().toArray();
@@ -14,9 +14,9 @@ class ContactRepository {
     });
   }
 
-  findByEmail(email) {
+  findByName(name) {
     return this.collection.findOne({
-      email,
+      name,
     });
   }
 
@@ -26,27 +26,26 @@ class ContactRepository {
     });
   }
 
-  async create(contact) {
+  async create(category) {
     return this.collection.insertOne({
       _id: uuid(),
-      ...contact,
+      ...category,
     });
   }
 
   async update(id, {
-    name, email, phone, categoryId,
+    name,
   }) {
+    console.log(id);
+    console.log('AQUI');
     return this.collection.updateOne({
       _id: id,
     }, {
       $set: {
         ...(name && { name }),
-        ...(email && { email }),
-        ...(phone && { phone }),
-        ...(categoryId && { categoryId }),
       },
     });
   }
 }
 
-module.exports = new ContactRepository();
+module.exports = new CategoryRepository();

@@ -1,4 +1,5 @@
 const ContactRepository = require('../repositories/ContactRepository');
+const CategoryRepository = require('../repositories/CategoryRepository');
 
 class ContactController {
   async index(request, response) {
@@ -16,7 +17,9 @@ class ContactController {
   }
 
   async store(request, response) {
-    const { name, email, phone } = request.body;
+    const {
+      name, email, phone, category_id,
+    } = request.body;
     if (!name || !email || !phone) {
       return response.status(400).json({ error: 'Missing required fields' });
     }
@@ -24,7 +27,13 @@ class ContactController {
     if (contactAlreadyExists) {
       return response.status(404).json({ error: 'Contact already exists' });
     }
-    const contact = await ContactRepository.create({ name, email, phone });
+    const category = await CategoryRepository.findById(category_id);
+    if (!category) {
+      return response.status(404).json({ error: 'Category not found' });
+    }
+    const contact = await ContactRepository.create({
+      name, email, phone, categoryId: category._id,
+    });
     return response.json(contact);
   }
 
